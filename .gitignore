@@ -192,6 +192,9 @@ publish/
 # in these scripts will be unencrypted
 PublishScripts/
 
+# Visual Studio Code # 
+.vscode/* 
+
 # NuGet Packages
 *.nupkg
 # NuGet Symbol Packages
