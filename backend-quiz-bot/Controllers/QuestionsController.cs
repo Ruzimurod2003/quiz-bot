@@ -19,9 +19,33 @@ namespace BackendQuizBot.Controllers
 
         // GET: api/Questions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestions()
+        public async Task<ActionResult<IEnumerable<QuestionWithAnswerVM>>> GetQuestions()
         {
-            return await _context.Questions.ToListAsync();
+            try
+            {
+                var result = new List<QuestionWithAnswerVM>();
+                var questions = await _context.Questions.ToListAsync();
+                foreach (var question in questions)
+                {
+                    var resultOnlyModel = new QuestionWithAnswerVM
+                    {
+                        QuestionDescription = question.Description,
+                        QuestionId = question.Id
+                    };
+                    var answers = _context.Answers
+                        .Where(i => i.QuestionId == question.Id)
+                        .ToList();
+                    resultOnlyModel.Answers = answers;
+
+                    result.Add(resultOnlyModel);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/Questions/5
