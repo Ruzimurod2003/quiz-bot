@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackendQuizBot.Data;
 using BackendQuizBot.Models;
+using BackendQuizBot.ViewModels;
 
 namespace BackendQuizBot.Controllers
 {
@@ -25,7 +21,7 @@ namespace BackendQuizBot.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Answer>>> GetAnswers()
         {
-            return await _context.Answers.ToListAsync();
+            return await _context.Answers.Include(i => i.Question).ToListAsync();
         }
 
         // GET: api/Answers/5
@@ -43,66 +39,76 @@ namespace BackendQuizBot.Controllers
         }
 
         // PUT: api/Answers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAnswer(int id, Answer answer)
+        public async Task<IActionResult> PutAnswer(int id, AnswerVM answerVM)
         {
-            if (id != answer.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(answer).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AnswerExists(id))
+                var answer = await _context.Answers.FirstOrDefaultAsync(i => i.Id == id);
+
+                if (answer == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
-            }
+                answer.Description = answerVM.Description;
+                answer.QuestionId = answerVM.QuestionId;
+                answer.IsTrue = answerVM.IsTrue;
 
-            return NoContent();
+                await _context.SaveChangesAsync();
+                return Ok(new { Result = true, Status = "Update" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/Answers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Answer>> PostAnswer(Answer answer)
+        public async Task<ActionResult<Answer>> PostAnswer(AnswerVM answerVM)
         {
-            _context.Answers.Add(answer);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var answer = new Answer()
+                {
+                    Description = answerVM.Description,
+                    IsTrue = answerVM.IsTrue,
+                    QuestionId = answerVM.QuestionId,
+                    Created = DateTime.Now
+                };
 
-            return CreatedAtAction("GetAnswer", new { id = answer.Id }, answer);
+                _context.Answers.Add(answer);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetAnswer", new { id = answer.Id }, answer);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Answers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAnswer(int id)
         {
-            var answer = await _context.Answers.FindAsync(id);
-            if (answer == null)
+            try
             {
-                return NotFound();
+                var answer = await _context.Answers.FindAsync(id);
+                if (answer == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Answers.Remove(answer);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Result = true, Status = "Delete" });
             }
-
-            _context.Answers.Remove(answer);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool AnswerExists(int id)
-        {
-            return _context.Answers.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

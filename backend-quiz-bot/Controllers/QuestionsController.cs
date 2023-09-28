@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackendQuizBot.Data;
 using BackendQuizBot.Models;
+using BackendQuizBot.ViewModels;
 
 namespace BackendQuizBot.Controllers
 {
@@ -43,66 +39,72 @@ namespace BackendQuizBot.Controllers
         }
 
         // PUT: api/Questions/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutQuestion(int id, Question question)
+        public async Task<IActionResult> PutQuestion(int id, QuestionVM questionVM)
         {
-            if (id != question.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(question).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!QuestionExists(id))
+                var question = await _context.Questions.FirstOrDefaultAsync(i => i.Id == id);
+
+                if (question == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
-            }
+                question.Description = questionVM.Description;
 
-            return NoContent();
+                await _context.SaveChangesAsync();
+                return Ok(new { Result = true, Status = "Update" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/Questions
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Question>> PostQuestion(Question question)
+        public async Task<ActionResult<Question>> PostQuestion(QuestionVM questionVM)
         {
-            _context.Questions.Add(question);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var question = new Question()
+                {
+                    Description = questionVM.Description,
+                    Created = DateTime.Now
+                };
 
-            return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
+                _context.Questions.Add(question);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Questions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQuestion(int id)
         {
-            var question = await _context.Questions.FindAsync(id);
-            if (question == null)
+            try
             {
-                return NotFound();
+                var question = await _context.Questions.FindAsync(id);
+                if (question == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Questions.Remove(question);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { Result = true, Status = "Delete" });
             }
-
-            _context.Questions.Remove(question);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool QuestionExists(int id)
-        {
-            return _context.Questions.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
