@@ -34,8 +34,16 @@ namespace BackendQuizBot.Controllers
                     };
                     var answers = _context.Answers
                         .Where(i => i.QuestionId == question.Id)
-                        .ToList();
-                    resultOnlyModel.Answers = answers;
+                        .ToList()
+                        .Select(i =>
+                        new OnlyAnswerVM
+                        {
+                            Id = i.Id,
+                            Description = i.Description,
+                            IsTrue = i.IsTrue,
+                            QuestionId = i.QuestionId
+                        });
+                    resultOnlyModel.Answers = answers.ToList();
 
                     result.Add(resultOnlyModel);
                 }

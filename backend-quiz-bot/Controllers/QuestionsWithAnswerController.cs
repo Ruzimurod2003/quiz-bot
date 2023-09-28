@@ -27,7 +27,14 @@ namespace BackendQuizBot.Controllers
                     QuestionId = question.Id
                 };
                 var answers = _context.Answers.Where(i => i.QuestionId == questionId).ToList();
-                result.Answers = answers;
+                result.Answers = answers.Select(i =>
+                        new OnlyAnswerVM
+                        {
+                            Id = i.Id,
+                            Description = i.Description,
+                            IsTrue = i.IsTrue,
+                            QuestionId = i.QuestionId
+                        }).ToList();
 
                 return Ok(result);
             }
@@ -48,7 +55,7 @@ namespace BackendQuizBot.Controllers
                 {
                     var question = _context.Questions.FirstOrDefault(i => i.Id == data.questionId);
                     var answer = _context.Answers.FirstOrDefault(i => i.Id == data.answerId);
-                    var rightAnswer = _context.Answers.FirstOrDefault(i=>i.QuestionId == question.Id && i.IsTrue);
+                    var rightAnswer = _context.Answers.FirstOrDefault(i => i.QuestionId == question.Id && i.IsTrue);
                     if (answer.QuestionId != question.Id)
                     {
                         return BadRequest();
@@ -69,7 +76,7 @@ namespace BackendQuizBot.Controllers
                     CountRight = count,
                     ErrorAnswers = string.Join(",", rightAnswerList.ToArray()),
                     Result = $"{procent} %"
-                }) ;
+                });
             }
             catch (Exception ex)
             {

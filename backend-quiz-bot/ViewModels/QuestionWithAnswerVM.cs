@@ -6,5 +6,5 @@ public class QuestionWithAnswerVM
 {
     public string QuestionDescription { get; set; }
     public int QuestionId { get; set; }
-    public List<Answer> Answers { get; set; }
+    public List<OnlyAnswerVM> Answers { get; set; }
 }
