@@ -1,4 +1,5 @@
 ﻿using BackendQuizBot.Data;
+using BackendQuizBot.Models;
 using BackendQuizBot.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,17 +46,17 @@ namespace BackendQuizBot.Controllers
         }
         // GET: api/Questions
         [HttpPost]
-        public ActionResult CheckQuestionsWithAnswer(List<CheckAnswerVM> datas)
+        public ActionResult CheckQuestionsWithAnswer(UserAlsoCheckAnswerVM datas)
         {
             try
             {
                 int count = 0;
                 List<string> rightAnswerList = new List<string>();
-                foreach (var data in datas)
+                foreach (var data in datas.AnswerAndQuestions)
                 {
                     var question = _context.Questions.FirstOrDefault(i => i.Id == data.questionId);
                     var answer = _context.Answers.FirstOrDefault(i => i.Id == data.answerId);
-                    var rightAnswer = _context.Answers.FirstOrDefault(i => i.QuestionId == question.Id && i.IsTrue);
+
                     if (answer.QuestionId != question.Id)
                     {
                         return BadRequest();
@@ -65,17 +66,21 @@ namespace BackendQuizBot.Controllers
                     {
                         count++;
                     }
-                    else
-                    {
-                        rightAnswerList.Add($"{question.Id}:{rightAnswer.Id}");
-                    }
                 }
-                double procent = ((double)count / datas.Count) * 100;
+                var userResult = new Result()
+                {
+                    TelegramId = datas.UserId,
+                    Created = DateTime.Now,
+                    PassedExamCount = count
+                };
+
+                _context.Results.Add(userResult);
+                _context.SaveChanges();
+
                 return Ok(new
                 {
-                    CountRight = count,
-                    ErrorAnswers = string.Join(",", rightAnswerList.ToArray()),
-                    Result = $"{procent} %"
+                    All = _context.Questions.Count(),
+                    Passed = count
                 });
             }
             catch (Exception ex)

@@ -9,6 +9,7 @@ public class ApplicationContext : DbContext
                         : base(options) { }
     public DbSet<Question> Questions { get; set; }
     public DbSet<Answer> Answers { get; set; }
+    public DbSet<Result> Results { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
