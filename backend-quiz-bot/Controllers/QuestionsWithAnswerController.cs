@@ -1,7 +1,6 @@
 ﻿using BackendQuizBot.Data;
 using BackendQuizBot.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BackendQuizBot.Controllers
 {
@@ -31,6 +30,46 @@ namespace BackendQuizBot.Controllers
                 result.Answers = answers;
 
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        // GET: api/Questions
+        [HttpPost]
+        public ActionResult CheckQuestionsWithAnswer(List<CheckAnswerVM> datas)
+        {
+            try
+            {
+                int count = 0;
+                List<string> rightAnswerList = new List<string>();
+                foreach (var data in datas)
+                {
+                    var question = _context.Questions.FirstOrDefault(i => i.Id == data.questionId);
+                    var answer = _context.Answers.FirstOrDefault(i => i.Id == data.answerId);
+                    var rightAnswer = _context.Answers.FirstOrDefault(i=>i.QuestionId == question.Id && i.IsTrue);
+                    if (answer.QuestionId != question.Id)
+                    {
+                        return BadRequest();
+                    }
+
+                    if (answer.IsTrue)
+                    {
+                        count++;
+                    }
+                    else
+                    {
+                        rightAnswerList.Add($"{question.Id}:{rightAnswer.Id}");
+                    }
+                }
+                double procent = ((double)count / datas.Count) * 100;
+                return Ok(new
+                {
+                    CountRight = count,
+                    ErrorAnswers = string.Join(",", rightAnswerList.ToArray()),
+                    Result = $"{procent} %"
+                }) ;
             }
             catch (Exception ex)
             {
