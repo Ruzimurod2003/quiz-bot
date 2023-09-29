@@ -6,7 +6,7 @@ import debounce from 'lodash.debounce';
 import Question from "./Question";
 import NavQuestions from "./NavQuestions";
 
-export default function Questions({questions, addToAnswers}) {
+export default function Questions({questions, addToAnswers, answers}) {
     const containerRef = useRef(null);
     const [scrollPosition, setScrollPosition] = useState(0);
     const [touchStartX, setTouchStartX] = useState(null);
@@ -69,9 +69,10 @@ export default function Questions({questions, addToAnswers}) {
                  }}
                  className="parent h-full w-full pb-8 space-x-4" ref={containerRef}>
                 {questions.map((question, index) =>
-                    <Question key={question.id} index={index}
+                    <Question key={question.questionId} index={index}
                               question={question}
                               addToAnswers={addToAnswers}
+                              answers={answers}
                               scrollPosition={scrollPosition}
                               scrollIntoView={scrollIntoView}></Question>
                 )}

@@ -1,6 +1,6 @@
 import {Button} from "flowbite-react";
 
-export default function Question({index, scrollIntoView, scrollPosition, question, addToAnswers}) {
+export default function Question({index, scrollIntoView, answers, scrollPosition, question, addToAnswers}) {
 
     return (
         <div
@@ -10,7 +10,7 @@ export default function Question({index, scrollIntoView, scrollPosition, questio
 
             <div className="mt-2 whitespace-normal  font-semibold">
                 <span>
-                     {question.description}
+                     {question.questionDescription}
                 </span>
             </div>
 
@@ -19,7 +19,7 @@ export default function Question({index, scrollIntoView, scrollPosition, questio
                     <Button
                         key={answer.id}
                         onClick={e => {
-                            addToAnswers(answer.id, question.id);
+                            addToAnswers(question.questionId, answer.id);
                         }}
                         className={`justify-start w-full
                          dark:border-gray-300
@@ -31,9 +31,11 @@ export default function Question({index, scrollIntoView, scrollPosition, questio
                          hover:text-white
                          focus:ring-0
                          hover:border-transparent
-                         ${scrollPosition === index ?
-                            'bg-blue-500 border-transparent text-white'
-                            : ''}
+                         ${
+                            Object.values(answers).filter(e => e.answerId === answer.id).length ?
+                                'bg-blue-500 border-transparent text-white dark:bg-blue-500 dark:border-transparent dark:text-white '
+                                : ''
+                        }
                          `}
                         color="gray"
                         pill

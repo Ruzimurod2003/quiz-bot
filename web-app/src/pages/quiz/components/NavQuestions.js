@@ -7,7 +7,7 @@ export default function NavQuestions({questions, scrollIntoView, scrollPosition}
                 {questions.map((e, index) => (
 
                     <button
-                        key={e.id}
+                        key={'nav_key_' + index}
                         onClick={() => scrollIntoView(index)}
                         className=
                             {`w-6 h-6 rounded-full border border-white flex items-center 
@@ -16,7 +16,7 @@ export default function NavQuestions({questions, scrollIntoView, scrollPosition}
                                 ${(scrollPosition === index ? 'border-blue-500 bg-blue-500' : "")}`}
                     >
                         {/* Add your figure (icon) inside the button */}
-                        <div className="text-xs">{e.id}</div>
+                        <div className="text-xs">{index + 1}</div>
                     </button>
                 ))}
             </div>

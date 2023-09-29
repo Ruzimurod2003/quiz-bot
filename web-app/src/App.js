@@ -18,7 +18,6 @@ function App() {
             <Route index element={<Home/>}></Route>
             <Route element={<Quiz/>} path={'quiz'}></Route>
         </Routes>
-        <Quiz></Quiz>
     </div>);
 }
 

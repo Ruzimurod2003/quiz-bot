@@ -24,7 +24,6 @@ export default function Home() {
                         Start quiz now
                     </Button>
                 </Link>
-
             </div>
         </div>
     );

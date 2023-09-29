@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 
-const CountdownTimer = ({initialTime, endOfTime}) => {
-    const [remainingTime, setRemainingTime] = useState(initialTime);
+const CountdownTimer = ({remainingTime, setRemainingTime, endOfTime}) => {
+
 
     useEffect(() => {
         const updateInterval = setInterval(() => {

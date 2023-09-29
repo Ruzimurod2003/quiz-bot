@@ -10,7 +10,7 @@ function HiOutlineExclamationCircle(props) {
 }
 
 HiOutlineExclamationCircle.propTypes = {className: PropTypes.string};
-export default function Header({submitResult}) {
+export default function Header({remainingTime, setRemainingTime, submitResult}) {
     const [openModal, setOpenModal] = useState();
     const props = {openModal, setOpenModal};
     const [completed, setCompleted] = useState({});
@@ -26,7 +26,10 @@ export default function Header({submitResult}) {
                 <BackButton></BackButton>
             </div>
             <div className="">
-                <CountdownTimer endOfTime={showPopUp} initialTime={180}></CountdownTimer>
+                <CountdownTimer remainingTime={remainingTime}
+                                setRemainingTime={setRemainingTime}
+                                endOfTime={showPopUp}
+                ></CountdownTimer>
             </div>
             <div>
                 <Button
@@ -52,9 +55,8 @@ export default function Header({submitResult}) {
                     <Modal.Header className="dark:bg-white rounded-t-3xl"/>
                     <Modal.Body className="dark:bg-white rounded-b-3xl">
                         <div className="text-center">
-
                             <h3 className="mb-5 text-lg font-normal text-gray-800 dark:text-gray-800">
-                                Your test result is {completed.all} out of {completed.passed}
+                                Your test result is {completed.passed} out of {completed.all}
                             </h3>
                             <div className="flex justify-center gap-4">
                                 <Link style={{all: 'none'}} to={"/"}>
