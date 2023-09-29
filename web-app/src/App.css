@@ -3,12 +3,24 @@
 @tailwind utilities;
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
 }
 
 body {
-  background: var(--tg-theme-bg-color);
-  color: var(--tg-theme-text-color);
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+}
+
+.background-animation {
+    background: linear-gradient(150deg, #3662C9 0%, #6525D2 100%);;
+
+}
+
+.background-animation-button {
+    background: linear-gradient(150deg, #6795fd 0%, #6525D2 100%);
+    border: none !important;
+
 }

@@ -1,39 +1,15 @@
-import {ScrollMenu, VisibilityContext} from 'react-horizontal-scrolling-menu';
 import 'react-horizontal-scrolling-menu/dist/styles.css';
 import {useEffect, useRef, useState} from "react";
+
 import '../style/quiz.css';
 import debounce from 'lodash.debounce';
+import Question from "./Question";
+import NavQuestions from "./NavQuestions";
 
-export default function ListQuestions() {
+export default function Questions({questions, addToAnswers}) {
     const containerRef = useRef(null);
     const [scrollPosition, setScrollPosition] = useState(0);
     const [touchStartX, setTouchStartX] = useState(null);
-
-    useEffect(() => {
-        const container = containerRef.current;
-        document.querySelector('.parent').addEventListener('wheel', preventScroll, {passive: false});
-
-        function preventScroll(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            return false;
-        }
-
-        const handleScroll = (e) => {
-            e.preventDefault(); // Prevent the default scroll behavior
-
-        };
-
-        container.addEventListener('wheel', handleScroll);
-
-
-        return () => {
-            // Remove the event listener when the component is no longer active
-            container.removeEventListener('wheel', handleScroll);
-        };
-
-    }, []);
 
     const scrollIntoView = (index) => {
         if (containerRef.current) {
@@ -42,7 +18,6 @@ export default function ListQuestions() {
                 const containerWidth = containerRef.current.clientWidth;
                 const childWidth = child.clientWidth;
                 const scrollLeft = child.offsetLeft - Math.floor((containerWidth - childWidth) / 2);
-                console.log(containerWidth, child.offsetLeft);
                 containerRef.current.scrollTo({left: scrollLeft, behavior: 'smooth'});
                 setScrollPosition(index);
             }
@@ -78,25 +53,35 @@ export default function ListQuestions() {
         <div style={{
             height: "calc(100% - 3.5rem)",
             touchAction: 'none'
-        }}
-             onTouchStart={e => {
-                 handleTouchStart(e);
-             }}
+        }}>
+            <NavQuestions questions={questions} scrollIntoView={scrollIntoView}
+                          scrollPosition={scrollPosition}></NavQuestions>
 
-             onTouchMove={e => {
-                 handleTouchMove(e);
-             }}
-             className="parent w-full space-x-4" ref={containerRef}>
+            <div style={{
+                touchAction: 'none'
+            }}
+                 onTouchStart={e => {
+                     handleTouchStart(e);
+                 }}
 
-            {Array.from({length: 10}, (_, index) => (
-                <div key={index}
-                     onClick={() => scrollIntoView(index)}
-                     className={`${scrollPosition === index ? 'active' : ''}
-                      h-full pt-4 flex-1 bg-white rounded-2xl w-[90%] child`}>
-                    <div>s {index}</div>
+                 onTouchMove={e => {
+                     handleTouchMove(e);
+                 }}
+                 className="parent h-full w-full pb-8 space-x-4" ref={containerRef}>
+                {questions.map((question, index) =>
+                    <Question key={question.id} index={index}
+                              question={question}
+                              addToAnswers={addToAnswers}
+                              scrollPosition={scrollPosition}
+                              scrollIntoView={scrollIntoView}></Question>
+                )}
+                <div className="child">
+
                 </div>
-            ))}
+
+            </div>
         </div>
+
 
     );
 }
