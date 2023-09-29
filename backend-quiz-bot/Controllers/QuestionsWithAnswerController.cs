@@ -1,12 +1,14 @@
 ﻿using BackendQuizBot.Data;
 using BackendQuizBot.Models;
 using BackendQuizBot.ViewModels;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendQuizBot.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowAllOrigins")]
     public class QuestionsWithAnswerController : ControllerBase
     {
         private readonly ApplicationContext _context;
