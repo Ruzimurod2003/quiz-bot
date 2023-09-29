@@ -73,7 +73,8 @@ namespace BackendQuizBot.Controllers
                 {
                     TelegramId = datas.UserId,
                     Created = DateTime.Now,
-                    PassedExamCount = count
+                    PassedExamCount = count,
+                    SpentTime = datas.SpentTime
                 };
 
                 _context.Results.Add(userResult);
