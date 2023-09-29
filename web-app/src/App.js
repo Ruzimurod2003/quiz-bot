@@ -10,6 +10,8 @@ function App() {
 
     useEffect(() => {
         tg.ready();
+        console.log(tg);
+        console.log(window.Telegram.WebApp);
     }, [])
 
     return (<div
