@@ -91,5 +91,22 @@ namespace BackendQuizBot.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        // GET: api/Questions
+        [HttpGet]
+        [Route("api/results")]
+        public ActionResult<List<Result>> GetResults()
+        {
+            try
+            {
+                var results = _context.Results.ToList();
+                
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
     }
 }
