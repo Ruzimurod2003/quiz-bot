@@ -8,7 +8,7 @@ export default function Question({index, scrollIntoView, answers, scrollPosition
             className="first:ml-4 h-[90%] p-5 flex-1 bg-white text-gray-800 rounded-2xl w-[85%] child">
             <div className="text-lg font-bold">{index + 1}.</div>
 
-            <div className="mt-2 whitespace-normal  font-semibold">
+            <div className="mt-2 h-[10%] whitespace-break-spaces  font-semibold">
                 <span>
                      {question.questionDescription}
                 </span>

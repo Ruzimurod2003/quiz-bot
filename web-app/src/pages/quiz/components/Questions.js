@@ -26,7 +26,15 @@ export default function Questions({questions, addToAnswers, answers}) {
 
     const debouncedScrollIntoView = debounce(scrollIntoView, 200);
 
+    useEffect(() => {
+        var container = document.getElementsByClassName("parent");
 
+        container[0].addEventListener("wheel", function (event) {
+            // Scroll horizontally by manipulating the scrollLeft property
+            // Prevent the default scroll behavior
+            event.preventDefault();
+        });
+    }, [])
     const handleTouchStart = (e) => {
         setTouchStartX(e.touches[0].clientX);
     };
@@ -52,7 +60,6 @@ export default function Questions({questions, addToAnswers, answers}) {
     return (
         <div style={{
             height: "calc(100% - 3.5rem)",
-            touchAction: 'none'
         }}>
             <NavQuestions questions={questions} scrollIntoView={scrollIntoView}
                           scrollPosition={scrollPosition}></NavQuestions>
@@ -76,6 +83,7 @@ export default function Questions({questions, addToAnswers, answers}) {
                               scrollPosition={scrollPosition}
                               scrollIntoView={scrollIntoView}></Question>
                 )}
+
                 <div className="child">
 
                 </div>
